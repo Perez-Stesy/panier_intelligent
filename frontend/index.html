@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PurchaseFlow — Gestion des Achats</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <!-- Ambient Background Layers -->
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grain"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <div class="header-inner">
+            <div class="logo-group">
+                <svg class="logo-icon" width="36" height="36" viewBox="0 0 36 36">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#e8c87a"/>
+                            <stop offset="100%" stop-color="#d4a94c"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="4" y="8" width="28" height="20" rx="3" fill="none" stroke="url(#logoGrad)" stroke-width="2.5"/>
+                    <path d="M4 14 L32 14" stroke="url(#logoGrad)" stroke-width="2.5"/>
+                    <circle cx="11" cy="20" r="2" fill="url(#logoGrad)"/>
+                    <circle cx="17" cy="20" r="2" fill="url(#logoGrad)"/>
+                </svg>
+                <span class="logo-text">PurchaseFlow</span>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Tableau de bord</button>
+                <button class="nav-tab" data-tab="history">Historique</button>
+                <button class="nav-tab" data-tab="analysis">Analyse</button>
+            </nav>
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobileOverlay">
+        <button class="mobile-nav-close" id="mobileClose">&times;</button>
+        <nav class="mobile-nav-links">
+            <button class="mobile-nav-btn active" data-tab="dashboard">Tableau de bord</button>
+            <button class="mobile-nav-btn" data-tab="history">Historique</button>
+            <button class="mobile-nav-btn" data-tab="analysis">Analyse</button>
+        </nav>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-wrapper">
+
+        <!-- ════════════════ TAB: DASHBOARD ════════════════ -->
+        <section class="tab-panel active" id="panel-dashboard">
+
+            <!-- KPI Cards Row -->
+            <div class="kpi-row">
+                <div class="kpi-card" style="--delay:0s">
+                    <div class="kpi-icon">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><path d="M14 2 L26 9 L26 21 L14 28 L2 21 L2 9 Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 2 L14 28 M2 9 L26 21 M26 9 L2 21" stroke="currentColor" stroke-width="0.8" opacity="0.3"/></svg>
+                    </div>
+                    <span class="kpi-label">Bilan Total</span>
+                    <span class="kpi-value" id="kpi-total">0,00 FCFA</span>
+                </div>
+                <div class="kpi-card" style="--delay:0.1s">
+                    <div class="kpi-icon">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 8 L14 14 L19 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </div>
+                    <span class="kpi-label">Nombre d'Achats</span>
+                    <span class="kpi-value" id="kpi-count">0</span>
+                </div>
+                <div class="kpi-card" style="--delay:0.2s">
+                    <div class="kpi-icon">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><path d="M4 22 L10 14 L16 17 L24 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="6" r="2.5" fill="currentColor"/></svg>
+                    </div>
+                    <span class="kpi-label">Moy. par Achat</span>
+                    <span class="kpi-value" id="kpi-avg">0,00 FCFA</span>
+                </div>
+            </div>
+
+            <!-- Two-Column Layout: Form + Recent -->
+            <div class="dashboard-grid">
+
+                <!-- ADD PURCHASE FORM -->
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-accent"></span>
+                            Nouvel Achat
+                        </h2>
+                    </div>
+                    <form id="purchaseForm" class="purchase-form" novalidate>
+                        <div class="form-group">
+                            <label for="produitName">Nom du Produit</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="produitName" class="form-input" placeholder="Ex : Riz basmati" autocomplete="off" />
+                                <div class="suggestions-dropdown" id="suggestions"></div>
+                            </div>
+                            <span class="form-error" id="err-produit"></span>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prix">Prix (FCFA)</label>
+                                <input type="number" id="prix" class="form-input" placeholder="1500" min="0.01" step="0.01" />
+                                <span class="form-error" id="err-prix"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="dateAchat">Date d'Achat</label>
+                                <input type="date" id="dateAchat" class="form-input" />
+                                <span class="form-error" id="err-date"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit">
+                            <span class="btn-text">Ajouter l'Achat</span>
+                            <span class="btn-shimmer"></span>
+                        </button>
+                    </form>
+                    <!-- Toast -->
+                    <div class="toast" id="toast">
+                        <span class="toast-icon">✓</span>
+                        <span class="toast-msg" id="toast-msg">Achat ajouté avec succès</span>
+                    </div>
+                </div>
+
+                <!-- RECENT PURCHASES MINI LIST -->
+                <div class="card recent-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-accent"></span>
+                            Derniers Achats
+                        </h2>
+                    </div>
+                    <div class="recent-list" id="recentList">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><path d="M18 24 h12 M24 18 v12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/></svg>
+                            <p>Aucun achat pour le moment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════ TAB: HISTORY ════════════════ -->
+        <section class="tab-panel" id="panel-history">
+            <div class="card full-card">
+                <div class="card-header history-header">
+                    <h2 class="card-title">
+                        <span class="title-accent"></span>
+                        Historique des Achats
+                    </h2>
+                    <div class="history-controls">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un produit…" />
+                        <select class="sort-select" id="sortSelect">
+                            <option value="date-desc">Date ↓</option>
+                            <option value="date-asc">Date ↑</option>
+                            <option value="prix-desc">Prix ↓</option>
+                            <option value="prix-asc">Prix ↑</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="history-summary" id="historySummary">
+                    <span class="hs-item"><em class="hs-num" id="hs-total-count">0</em> achat(s)</span>
+                    <span class="hs-sep">·</span>
+                    <span class="hs-item">Total : <em class="hs-num" id="hs-total-price">0,00 FCFA</em></span>
+                </div>
+                <div class="history-table-wrap">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Produit</th>
+                                <th>Prix</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                    <div class="empty-state" id="historyEmpty">
+                        <svg width="48" height="48" viewBox="0 0 48 48"><rect x="6" y="10" width="36" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3"/><path d="M6 20 h36" stroke="currentColor" stroke-width="2" opacity="0.3"/><path d="M16 30 h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/></svg>
+                        <p>Aucun achat enregistré</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ════════════════ TAB: ANALYSIS ════════════════ -->
+        <section class="tab-panel" id="panel-analysis">
+            <div class="analysis-grid">
+
+                <!-- Top Produit -->
+                <div class="card analysis-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-accent"></span>
+                            Top Produit
+                        </h2>
+                    </div>
+                    <div class="date-range-picker">
+                        <div class="form-group">
+                            <label>Date de début</label>
+                            <input type="date" class="form-input" id="topDateStart" />
+                        </div>
+                        <span class="picker-arrow">→</span>
+                        <div class="form-group">
+                            <label>Date de fin</label>
+                            <input type="date" class="form-input" id="topDateEnd" />
+                        </div>
+                        <button class="btn-analyse" id="btnAnalyse">Analyser</button>
+                    </div>
+                    <div class="top-product-result" id="topProductResult">
+                        <div class="top-podium">
+                            <div class="top-crown">
+                                <svg width="40" height="36" viewBox="0 0 40 36"><path d="M4 28 L4 12 L12 18 L20 4 L28 18 L36 12 L36 28 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M2 28 L38 28" stroke="currentColor" stroke-width="2.5"/></svg>
+                            </div>
+                            <span class="top-name" id="topProdName">—</span>
+                            <span class="top-count" id="topProdCount"></span>
+                        </div>
+                    </div>
+                    <!-- Ranking mini-list -->
+                    <div class="ranking-list" id="rankingList"></div>
+                </div>
+
+                <!-- Bilan Financier -->
+                <div class="card analysis-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-accent"></span>
+                            Bilan Financier
+                        </h2>
+                    </div>
+                    <div class="bilan-period">
+                        <div class="form-group">
+                            <label>Date de début</label>
+                            <input type="date" class="form-input" id="bilanDateStart" />
+                        </div>
+                        <span class="picker-arrow">→</span>
+                        <div class="form-group">
+                            <label>Date de fin</label>
+                            <input type="date" class="form-input" id="bilanDateEnd" />
+                        </div>
+                    </div>
+                    <div class="bilan-display">
+                        <div class="bilan-total-wrap">
+                            <span class="bilan-label">Total Dépenses</span>
+                            <span class="bilan-amount" id="bilanAmount">0,00 FCFA</span>
+                        </div>
+                        <div class="bilan-bar-container">
+                            <div class="bilan-bar" id="bilanBar"></div>
+                        </div>
+                        <div class="bilan-stats" id="bilanStats">
+                            <div class="bs-item">
+                                <span class="bs-label">Nombre d'achats</span>
+                                <span class="bs-val" id="bs-count">0</span>
+                            </div>
+                            <div class="bs-item">
+                                <span class="bs-label">Moyenne par achat</span>
+                                <span class="bs-val" id="bs-avg">0,00 FCFA</span>
+                            </div>
+                            <div class="bs-item">
+                                <span class="bs-label">Achat le plus cher</span>
+                                <span class="bs-val" id="bs-max">0,00 FCFA</span>
+                            </div>
+                            <div class="bs-item">
+                                <span class="bs-label">Achat le moins cher</span>
+                                <span class="bs-val" id="bs-min">0,00 FCFA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doughnut chart -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-accent"></span>
+                            Répartition par Produit
+                        </h2>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="doughnutChart" width="260" height="260"></canvas>
+                        <div class="chart-legend" id="chartLegend"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-icon">
+                <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M14 14 L26 26 M26 14 L14 26" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="modal-title">Confirmer la suppression</h3>
+            <p class="modal-desc">Cette action est irréversible. L'achat sera définitivement supprimé.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="btnCancelDelete">Annuler</button>
+                <button class="btn-confirm" id="btnConfirmDelete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
